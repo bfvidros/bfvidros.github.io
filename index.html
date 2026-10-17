@@ -1720,10 +1720,10 @@ function contato(){
 let Q={step:0,sv:[],larg:"",alt:"",comp:"",naoSei:false,fotos:[],nome:"",wa:"",cidade:"",desc:"",ok:false,enviado:false,err:{}};
 const QSTEPS=["Serviço","Medidas","Fotos","Seus dados","Revisão"];
 function orcamento(){
- if(Q.enviado) return `<div class="wrap q"><div class="done"><span class="qh">Pedido registrado</span><h2 class="h2" style="font-size:clamp(2rem,4vw,3rem)">Obrigado, ${esc(Q.nome.split(" ")[0])}!</h2>
-  <p class="lead">A B.F vai responder pelo WhatsApp ${esc(Q.wa)} para combinar a visita técnica.</p>
-  <p class="demo">Protótipo: nada foi enviado. No site real, este pedido entra automaticamente como <b>Lead</b> no CRM da plataforma B.F, com origem "site", serviço, medidas e fotos, sem redigitação.</p>
-  <div class="ctas">${waBtn("Adiantar pelo WhatsApp",resumoTxt())}<a class="btn" href="#inicio" data-reset>Voltar ao início</a></div></div>${qside()}</div>`;
+ if(Q.enviado) return `<div class="wrap q"><div class="done"><span class="qh">Pedido pronto no WhatsApp</span><h2 class="h2" style="font-size:clamp(2rem,4vw,3rem)">Obrigado, ${esc(Q.nome.split(" ")[0])}!</h2>
+  <p class="lead">Abrimos a conversa com a B.F no WhatsApp com o seu pedido escrito. Confira e toque em <b>enviar</b>${Q.fotos.length?", e anexe as fotos do local":""}. A B.F responde para combinar a visita técnica.</p>
+  ${Q.modo==="share"?`<p class="demo">No Compartilhar, escolha <b>WhatsApp</b> e depois a conversa <b>B.F Vidros</b>, número ${WA_TXT}. As fotos e o pedido vão juntos.</p>`:`<p class="demo">O WhatsApp não abriu? Toque no botão abaixo.</p>`}
+  <div class="ctas">${Q.modo==="share"?`<button class="btn" data-reshare>${ICO.wa} Compartilhar fotos e pedido de novo</button>`:""}<a class="btn ${Q.modo==="share"?"ghost":""}" href="${resumoWA()}" target="_blank" rel="noopener">${ICO.wa} ${Q.modo==="share"?"Abrir conversa da B.F (só texto)":"Abrir WhatsApp com o pedido"}</a><a class="btn ghost" href="#inicio" data-reset>Voltar ao início</a></div></div>${qside()}</div>`;
  const st=Q.step, e=Q.err;
  let body="";
  if(st===0) body=`<span class="qh">Passo 1 de 5</span><h2>Qual serviço você precisa?</h2><p class="lead" style="margin:-12px 0 28px">Pode escolher mais de um.</p>
@@ -1743,18 +1743,27 @@ function orcamento(){
    ${fld("cidade","Cidade / bairro da obra",Q.cidade,"text","Ex.: Curitiba, Água Verde","full")}
    <div class="fld full"><label for="desc">Conte um pouco do projeto</label><textarea id="desc" placeholder="Ex.: box de canto, vidro incolor, perfis pretos.">${esc(Q.desc)}</textarea>${e.desc?`<span class="err">${e.desc}</span>`:""}</div></div>
    <label class="check" style="margin-top:20px"><input type="checkbox" id="ok" ${Q.ok?"checked":""}> Autorizo a B.F Vidros a entrar em contato pelo WhatsApp sobre este pedido.</label>${e.ok?`<p class="fld"><span class="err">${e.ok}</span></p>`:""}`;
- if(st===4) body=`<span class="qh">Passo 5 de 5</span><h2>Confira e envie</h2>
+ if(st===4) body=`<span class="qh">Passo 5 de 5</span><h2>Confira e envie</h2><p class="lead" style="margin:-12px 0 24px">Ao tocar em <b>Enviar pelo WhatsApp</b>, a conversa com a B.F abre com o seu pedido já escrito. ${Q.fotos.length?"No celular, as fotos vão junto: escolha <b>WhatsApp</b> e a conversa da <b>B.F Vidros</b>.":"É só apertar enviar."}</p>
    <ul class="sum"><li><span>Serviços</span><span>${Q.sv.map(id=>svById(id).nome).join(", ")}</span></li>
    <li><span>Medidas</span><span>${medTxt()}</span></li><li><span>Fotos</span><span>${Q.fotos.length?Q.fotos.length+" foto(s)":"nenhuma"}</span></li>
    <li><span>Nome</span><span>${esc(Q.nome)}</span></li><li><span>WhatsApp</span><span>${esc(Q.wa)}</span></li><li><span>Cidade</span><span>${esc(Q.cidade)}</span></li>
    <li><span>Projeto</span><span>${esc(Q.desc)}</span></li></ul>`;
  return `<div class="wrap q"><div><div class="qsteps" aria-label="Progresso">${QSTEPS.map((s,k)=>`<span class="${k<=st?"on":""}" title="${s}"></span>`).join("")}</div>${body}
-   <div class="qnav">${st>0?`<button class="btn ghost" data-q="back">Voltar</button>`:"<span></span>"}<button class="btn" data-q="next">${st===4?"Enviar pedido":"Continuar"}</button></div></div>${qside()}</div>`;}
+   <div class="qnav">${st>0?`<button class="btn ghost" data-q="back">Voltar</button>`:"<span></span>"}<button class="btn" data-q="next">${st===4?`${ICO.wa} Enviar pelo WhatsApp`:"Continuar"}</button></div></div>${qside()}</div>`;}
 const fld=(id,l,v,t,ph,cls="")=>`<div class="fld ${cls}"><label for="${id}">${l}</label><input id="${id}" type="${t}" ${t==="number"?'inputmode="decimal" step="any"':""} value="${esc(v)}" placeholder="${esc(ph)}">${Q.err[id]?`<span class="err">${Q.err[id]}</span>`:""}</div>`;
 const qside=()=>`<aside class="qside">${img(F.portaDupla,"",false)}<span class="lbl">Como funciona</span><p class="lead">1. Você envia o pedido. 2. A B.F responde no WhatsApp. 3. Visita técnica e medição. 4. Proposta.</p>
  <p class="note">Valores só depois da medição no local. Seus dados são usados apenas para responder a este pedido.</p>${waBtn("Prefiro o WhatsApp")}</aside>`;
 const medTxt=()=>Q.naoSei?"A medir na visita":[Q.larg&&Q.alt?`${Q.larg} × ${Q.alt} cm`:"",Q.comp?`${Q.comp} m de guarda-corpo`:""].filter(Boolean).join(" · ")||"Não informadas";
-const resumoTxt=()=>`Olá, B.F Vidros! Pedido de orçamento pelo site.\nServiços: ${Q.sv.map(id=>svById(id).nome).join(", ")}\nMedidas: ${medTxt()}\nNome: ${Q.nome}\nCidade: ${Q.cidade}\nProjeto: ${Q.desc}`;
+const resumoTxt=()=>`Olá, B.F Vidros! Vim pelo site e gostaria de fazer um orçamento.\n\n*Serviço:* ${Q.sv.map(id=>svById(id).nome).join(", ")}\n*Medidas:* ${medTxt()}\n*Nome:* ${Q.nome}\n*WhatsApp:* ${Q.wa}\n*Cidade/bairro:* ${Q.cidade}\n*Projeto:* ${Q.desc}${Q.fotos.length?`\n\nVou enviar ${Q.fotos.length} foto(s) do local aqui na conversa.`:""}`;
+const resumoWA=()=>waMsg(resumoTxt());
+
+/* envio do pedido: com fotos usa o Compartilhar do celular; sem fotos abre o WhatsApp da B.F com o texto */
+function podeCompartilharFotos(){const a=Q.arqs||[];return a.length&&navigator.canShare&&navigator.canShare({files:a});}
+function enviarPedido(){
+ if(podeCompartilharFotos()){Q.modo="share";
+  const txt=resumoTxt().replace(/\n\nVou enviar .*$/,"")+"\n\n(Enviado para o WhatsApp da B.F Vidros: "+WA_TXT+")";
+  navigator.share({files:Q.arqs,text:txt,title:"Pedido de orçamento B.F Vidros"}).catch(()=>{});return;}
+ Q.modo="wa";try{window.open(resumoWA(),"_blank","noopener")}catch(_){}}
 function readQ(){const v=id=>{const x=document.getElementById(id);return x?x.value:undefined};
  ["larg","alt","comp","nome","wa","cidade","desc"].forEach(k=>{const x=v(k);if(x!==undefined)Q[k]=x.trim()});
  const ns=document.getElementById("naoSei"); if(ns)Q.naoSei=ns.checked; const ok=document.getElementById("ok"); if(ok)Q.ok=ok.checked;}
@@ -1860,10 +1869,10 @@ document.addEventListener("click",e=>{
  else if(t.dataset.pre){if(!Q.sv.includes(t.dataset.pre))Q.sv=[t.dataset.pre];Q.step=0;Q.enviado=false;}
  else if(t.dataset.reset!==undefined){Q={step:0,sv:[],larg:"",alt:"",comp:"",naoSei:false,fotos:[],nome:"",wa:"",cidade:"",desc:"",ok:false,enviado:false,err:{}};}
  else if(t.dataset.sv){const id=t.dataset.sv;Q.sv=Q.sv.includes(id)?Q.sv.filter(x=>x!==id):[...Q.sv,id];Q.err={};render();}
- else if(t.dataset.rmf!==undefined){Q.fotos.splice(+t.dataset.rmf,1);render();}
+ else if(t.dataset.rmf!==undefined){Q.fotos.splice(+t.dataset.rmf,1);(Q.arqs||[]).splice(+t.dataset.rmf,1);render();}
  else if(t.dataset.q){readQ();
   if(t.dataset.q==="back"){Q.step--;Q.err={};}
-  else if(validQ()){if(Q.step===4)Q.enviado=true;else Q.step++;}
+  else if(validQ()){if(Q.step===4){Q.enviado=true;enviarPedido();}else Q.step++;}
   render(); document.getElementById("app").scrollIntoView({block:"start"});}
 });
 /* antes e depois se mexe */
@@ -1879,8 +1888,9 @@ document.addEventListener("click",e=>{
  new MutationObserver(()=>setTimeout(olha,300)).observe(document.body,{childList:true});})();
 /* fim antes e depois se mexe */
 document.addEventListener("input",e=>{if(e.target.dataset.ba!==undefined)e.target.closest(".ba").style.setProperty("--x",e.target.value+"%");});
+document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("[data-reshare]")){e.preventDefault();enviarPedido();}});
 document.addEventListener("change",e=>{if(e.target.id==="fotos"){const files=[...e.target.files].slice(0,6-Q.fotos.length);
- let n=files.length; if(!n)return; files.forEach(f=>{const r=new FileReader();r.onload=()=>{Q.fotos.push(r.result);if(--n===0)render();};r.readAsDataURL(f);});}});
+ let n=files.length; if(!n)return; files.forEach(f=>{const r=new FileReader();r.onload=()=>{Q.fotos.push(r.result);(Q.arqs=Q.arqs||[]).push(f);if(--n===0)render();};r.readAsDataURL(f);});}});
 /* menu do celular */
 const menu=document.getElementById("menu");
 function closeMenu(){menu.hidden=true;document.body.style.overflow="";}
