@@ -1726,7 +1726,7 @@ const QSTEPS=["Serviço","Medidas","Fotos","Seus dados","Revisão"];
 function orcamento(){
  if(Q.enviado) return `<div class="wrap q"><div class="done"><span class="qh">Pedido pronto no WhatsApp</span><h2 class="h2" style="font-size:clamp(2rem,4vw,3rem)">Obrigado, ${esc(Q.nome.split(" ")[0])}!</h2>
   <p class="lead">Abrimos a conversa com a B.F no WhatsApp com o seu pedido escrito. Confira e toque em <b>enviar</b>. A B.F responde para combinar a visita técnica.</p>
-  ${Q.temFotos?`<div class="qfotos"><b>📎 Não esqueça das fotos</b><p>Depois de enviar a mensagem, anexe as fotos do local na mesma conversa, pelo clipe 📎 ou pela câmera do WhatsApp.</p></div>`:""}<p class="demo">O WhatsApp não abriu? Toque em “Abrir WhatsApp com o pedido”.</p>
+  ${Q.temFotos?`<div class="qfotos"><b>📎 Não esqueça das fotos</b><p>Depois de enviar a mensagem, anexe as fotos do local na mesma conversa, pelo clipe 📎 ou pela câmera do WhatsApp.</p></div>`:""}<p class="demo">${Q.waBloqueado?"<b>Toque em “Abrir WhatsApp com o pedido” para enviar.</b>":"O WhatsApp não abriu? Toque em “Abrir WhatsApp com o pedido”."}</p>
   <div class="ctas"><a class="btn" href="${resumoWA()}" target="_blank" rel="noopener">${ICO.wa} Abrir WhatsApp com o pedido</a><a class="btn ghost" href="#inicio" data-reset>Voltar ao início</a></div></div>${qside()}</div>`;
  const st=Q.step, e=Q.err;
  let body="";
@@ -1763,7 +1763,7 @@ const resumoWA=()=>waMsg(resumoTxt());
 
 /* envio do pedido: com fotos usa o Compartilhar do celular; sem fotos abre o WhatsApp da B.F com o texto */
 function podeCompartilharFotos(){const a=Q.arqs||[];return a.length&&navigator.canShare&&navigator.canShare({files:a});}
-function enviarPedido(){Q.modo="wa";const u=resumoWA();const w=window.open(u,"_blank","noopener");if(!w){try{location.href=u}catch(_){}}}
+function enviarPedido(){Q.modo="wa";const u=resumoWA();let w=null;try{w=window.open(u,"_blank");}catch(_){}if(w){try{w.opener=null}catch(_){}}else{Q.waBloqueado=1;}}
 function enviarFotos(){const a=Q.arqs||[];if(!a.length)return;
  if(podeCompartilharFotos()){navigator.share({files:a}).then(()=>{Q.fotosOk=1;render();}).catch(err=>{if(err&&err.name!=="AbortError"){Q.fotosFalha=1;render();}});}
  else{Q.fotosFalha=1;render();}}
