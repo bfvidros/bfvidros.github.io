@@ -1830,6 +1830,14 @@ function chrome(){
 
 /* ============ EVENTOS ============ */
 window.addEventListener("hashchange",()=>{obFoto=0;closeMenu();render();});
+/* navegação robusta (navegador do Instagram/Facebook não dispara hashchange de forma confiável):
+   links internos "#..." trocam de página aqui mesmo, depois dos outros cliques (fase de bolha na window) */
+window.addEventListener("click",e=>{if(e.defaultPrevented||e.button>0||e.metaKey||e.ctrlKey||e.shiftKey)return;
+ const a=e.target.closest&&e.target.closest('a[href^="#"]');if(!a||a.target==="_blank")return;
+ const h=a.getAttribute("href");if(!h||h==="#")return;e.preventDefault();
+ const igual=location.hash===h;if(!igual){try{history.pushState(null,"",h)}catch(_){location.hash=h;return;}}
+ window.dispatchEvent(new HashChangeEvent("hashchange"));if(igual)window.scrollTo(0,0);});
+window.addEventListener("popstate",()=>window.dispatchEvent(new HashChangeEvent("hashchange")));
 /* portal de vidro */
 (()=>{const abre=()=>document.querySelectorAll(".ph .portal:not(.aberta):not([data-mexido])").forEach(p=>{const r=p.getBoundingClientRect();if(r.top<innerHeight*.9&&r.bottom>0)setTimeout(()=>p.classList.add("aberta"),matchMedia("(prefers-reduced-motion: reduce)").matches?0:500)});
  addEventListener("scroll",abre,{passive:true});addEventListener("hashchange",()=>setTimeout(abre,120));setTimeout(abre,400);
