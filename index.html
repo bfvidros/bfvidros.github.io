@@ -1726,8 +1726,8 @@ const QSTEPS=["Serviço","Medidas","Fotos","Seus dados","Revisão"];
 function orcamento(){
  if(Q.enviado) return `<div class="wrap q"><div class="done"><span class="qh">Pedido pronto no WhatsApp</span><h2 class="h2" style="font-size:clamp(2rem,4vw,3rem)">Obrigado, ${esc(Q.nome.split(" ")[0])}!</h2>
   <p class="lead">Abrimos a conversa com a B.F no WhatsApp com o seu pedido escrito. Confira e toque em <b>enviar</b>. A B.F responde para combinar a visita técnica.</p>
-  ${Q.fotos.length?`<div class="qfotos"><b>Agora envie as fotos (${Q.fotos.length})</b><p>Depois de mandar a mensagem, volte aqui e toque em <b>Enviar as fotos</b>. Escolha <b>WhatsApp</b> e a conversa <b>B.F Vidros</b>, número ${WA_TXT}.</p>${Q.fotosFalha?`<p class="qfalha">Seu celular não deixou enviar as fotos por aqui. Abra a conversa da B.F no WhatsApp e anexe as fotos pelo clipe 📎.</p>`:""}${Q.fotosOk?`<p class="qok">✓ Fotos compartilhadas.</p>`:""}<button class="btn" data-fotoswa>${ICO.wa} Enviar as fotos</button></div>`:""}<p class="demo">O WhatsApp não abriu? Toque em “Abrir WhatsApp com o pedido”.</p>
-  <div class="ctas"><a class="btn ${Q.fotos.length?"ghost":""}" href="${resumoWA()}" target="_blank" rel="noopener">${ICO.wa} Abrir WhatsApp com o pedido</a><a class="btn ghost" href="#inicio" data-reset>Voltar ao início</a></div></div>${qside()}</div>`;
+  ${Q.temFotos?`<div class="qfotos"><b>📎 Não esqueça das fotos</b><p>Depois de enviar a mensagem, anexe as fotos do local na mesma conversa, pelo clipe 📎 ou pela câmera do WhatsApp.</p></div>`:""}<p class="demo">O WhatsApp não abriu? Toque em “Abrir WhatsApp com o pedido”.</p>
+  <div class="ctas"><a class="btn" href="${resumoWA()}" target="_blank" rel="noopener">${ICO.wa} Abrir WhatsApp com o pedido</a><a class="btn ghost" href="#inicio" data-reset>Voltar ao início</a></div></div>${qside()}</div>`;
  const st=Q.step, e=Q.err;
  let body="";
  if(st===0) body=`<span class="qh">Passo 1 de 5</span><h2>Qual serviço você precisa?</h2><p class="lead" style="margin:-12px 0 28px">Pode escolher mais de um.</p>
@@ -1739,17 +1739,17 @@ function orcamento(){
    ${tipos.includes("comprimento")?fld("comp","Comprimento total do guarda-corpo (m)",Q.comp,"number","Ex.: 4,5","full"):""}
    ${tipos.every(t=>t==="nenhuma")?`<p class="lead full">Para manutenção não é preciso medida. Descreva o problema no passo 4.</p>`:""}</div>
    <label class="check" style="margin-top:20px"><input type="checkbox" id="naoSei" ${Q.naoSei?"checked":""}> Não sei as medidas agora</label>`;}
- if(st===2) body=`<span class="qh">Passo 3 de 5</span><h2>Fotos do local</h2><p class="lead" style="margin:-12px 0 28px">Fotos do vão ou da área ajudam a preparar a visita. Opcional, até 6 fotos.</p>
-   <label class="drop"><input type="file" id="fotos" accept="image/*" multiple><b>Adicionar fotos</b><span class="note">Toque para escolher da galeria ou da câmera</span></label>
-   <div class="pv">${Q.fotos.map((f,k)=>`<div><img src="${f}" alt="Foto ${k+1}"><button data-rmf="${k}" aria-label="Remover foto ${k+1}">×</button></div>`).join("")}</div>`;
+ if(st===2) body=`<span class="qh">Passo 3 de 5</span><h2>Fotos do local</h2><p class="lead" style="margin:-12px 0 24px">Fotos do vão ou da área ajudam a B.F a preparar a visita.</p>
+   <div class="qfotos"><b>📎 Você manda as fotos direto no WhatsApp</b><p>Não precisa escolher as fotos aqui. Depois de enviar o pedido, a conversa com a B.F abre no WhatsApp e você anexa as fotos ali mesmo, pelo clipe 📎 ou pela câmera.</p></div>
+   <label class="check" style="margin-top:12px"><input type="checkbox" id="temFotos" ${Q.temFotos?"checked":""}> Tenho fotos do local para enviar</label>`;
  if(st===3) body=`<span class="qh">Passo 4 de 5</span><h2>Seus dados</h2>
    <div class="fields">${fld("nome","Nome",Q.nome,"text","Seu nome")}${fld("wa","WhatsApp",Q.wa,"tel","(41) 9 0000-0000")}
    ${fld("cidade","Cidade / bairro da obra",Q.cidade,"text","Ex.: Curitiba, Água Verde","full")}
    <div class="fld full"><label for="desc">Conte um pouco do projeto</label><textarea id="desc" placeholder="Ex.: box de canto, vidro incolor, perfis pretos.">${esc(Q.desc)}</textarea>${e.desc?`<span class="err">${e.desc}</span>`:""}</div></div>
    <label class="check" style="margin-top:20px"><input type="checkbox" id="ok" ${Q.ok?"checked":""}> Autorizo a B.F Vidros a entrar em contato pelo WhatsApp sobre este pedido.</label>${e.ok?`<p class="fld"><span class="err">${e.ok}</span></p>`:""}`;
- if(st===4) body=`<span class="qh">Passo 5 de 5</span><h2>Confira e envie</h2><p class="lead" style="margin:-12px 0 24px">Ao tocar em <b>Enviar pelo WhatsApp</b>, a conversa com a B.F abre com o seu pedido já escrito. ${Q.fotos.length?"Depois de enviar a mensagem, o site mostra o botão para mandar as fotos.":"É só apertar enviar."}</p>
+ if(st===4) body=`<span class="qh">Passo 5 de 5</span><h2>Confira e envie</h2><p class="lead" style="margin:-12px 0 24px">Ao tocar em <b>Enviar pelo WhatsApp</b>, a conversa com a B.F abre com o seu pedido já escrito. É só apertar enviar${Q.temFotos?" e depois anexar as fotos na conversa":""}.</p>
    <ul class="sum"><li><span>Serviços</span><span>${Q.sv.map(id=>svById(id).nome).join(", ")}</span></li>
-   <li><span>Medidas</span><span>${medTxt()}</span></li><li><span>Fotos</span><span>${Q.fotos.length?Q.fotos.length+" foto(s)":"nenhuma"}</span></li>
+   <li><span>Medidas</span><span>${medTxt()}</span></li><li><span>Fotos</span><span>${Q.temFotos?"vou enviar no WhatsApp":"sem fotos"}</span></li>
    <li><span>Nome</span><span>${esc(Q.nome)}</span></li><li><span>WhatsApp</span><span>${esc(Q.wa)}</span></li><li><span>Cidade</span><span>${esc(Q.cidade)}</span></li>
    <li><span>Projeto</span><span>${esc(Q.desc)}</span></li></ul>`;
  return `<div class="wrap q"><div><div class="qsteps" aria-label="Progresso">${QSTEPS.map((s,k)=>`<span class="${k<=st?"on":""}" title="${s}"></span>`).join("")}</div>${body}
@@ -1758,8 +1758,8 @@ const fld=(id,l,v,t,ph,cls="")=>`<div class="fld ${cls}"><label for="${id}">${l}
 const qside=()=>`<aside class="qside">${img(F.portaDupla,"",false)}<span class="lbl">Como funciona</span><p class="lead">1. Você envia o pedido. 2. A B.F responde no WhatsApp. 3. Visita técnica e medição. 4. Proposta.</p>
  <p class="note">Valores só depois da medição no local. Seus dados são usados apenas para responder a este pedido.</p>${waBtn("Prefiro o WhatsApp")}</aside>`;
 const medTxt=()=>Q.naoSei?"A medir na visita":[Q.larg&&Q.alt?`${Q.larg} × ${Q.alt} cm`:"",Q.comp?`${Q.comp} m de guarda-corpo`:""].filter(Boolean).join(" · ")||"Não informadas";
-const resumoTxt=()=>`Olá, B.F Vidros! Vim pelo site e gostaria de fazer um orçamento.\n\n*Serviço:* ${Q.sv.map(id=>svById(id).nome).join(", ")}\n*Medidas:* ${medTxt()}\n*Nome:* ${Q.nome}\n*WhatsApp:* ${Q.wa}\n*Cidade/bairro:* ${Q.cidade}\n*Projeto:* ${Q.desc}${Q.fotos.length?`\n\nVou enviar ${Q.fotos.length} foto(s) do local aqui na conversa.`:""}`;
-const resumoWA=()=>waMsg(resumoTxt().replace(/Vou enviar (d+) foto(s) do local aqui na conversa./,"Vou mandar $1 foto(s) do local em seguida."));
+const resumoTxt=()=>`Olá, B.F Vidros! Vim pelo site e gostaria de fazer um orçamento.\n\n*Serviço:* ${Q.sv.map(id=>svById(id).nome).join(", ")}\n*Medidas:* ${medTxt()}\n*Nome:* ${Q.nome}\n*WhatsApp:* ${Q.wa}\n*Cidade/bairro:* ${Q.cidade}\n*Projeto:* ${Q.desc}${Q.temFotos?`\n\nVou mandar fotos do local em seguida.`:""}`;
+const resumoWA=()=>waMsg(resumoTxt());
 
 /* envio do pedido: com fotos usa o Compartilhar do celular; sem fotos abre o WhatsApp da B.F com o texto */
 function podeCompartilharFotos(){const a=Q.arqs||[];return a.length&&navigator.canShare&&navigator.canShare({files:a});}
@@ -1769,7 +1769,7 @@ function enviarFotos(){const a=Q.arqs||[];if(!a.length)return;
  else{Q.fotosFalha=1;render();}}
 function readQ(){const v=id=>{const x=document.getElementById(id);return x?x.value:undefined};
  ["larg","alt","comp","nome","wa","cidade","desc"].forEach(k=>{const x=v(k);if(x!==undefined)Q[k]=x.trim()});
- const ns=document.getElementById("naoSei"); if(ns)Q.naoSei=ns.checked; const ok=document.getElementById("ok"); if(ok)Q.ok=ok.checked;}
+ const ns=document.getElementById("naoSei"); if(ns)Q.naoSei=ns.checked; const ok=document.getElementById("ok"); if(ok)Q.ok=ok.checked; const tf=document.getElementById("temFotos"); if(tf)Q.temFotos=tf.checked;}
 function validQ(){const e={};
  if(Q.step===0&&!Q.sv.length)e.sv="Escolha pelo menos um serviço.";
  if(Q.step===3){if(Q.nome.length<2)e.nome="Informe seu nome.";if(Q.wa.replace(/\D/g,"").length<10)e.wa="Informe um WhatsApp com DDD.";if(Q.cidade.length<2)e.cidade="Informe a cidade ou o bairro.";if(Q.desc.length<5)e.desc="Conte em poucas palavras o que você precisa.";if(!Q.ok)e.ok="Precisamos da sua autorização para responder.";}
